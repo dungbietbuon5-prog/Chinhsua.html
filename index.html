@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>UMA BONE RENAMER</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Courier New', Courier, monospace;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            background-color: #0d0d0d;
+            color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 15px;
+        }
+        .container {
+            width: 100%;
+            max-width: 450px;
+            background-color: #121212;
+            border: 1px solid #2a3a4a;
+            border-radius: 12px;
+            padding: 18px;
+            box-shadow: 0 0 25px rgba(0, 255, 255, 0.08);
+        }
+        h1 {
+            text-align: center;
+            color: #7df9ff;
+            font-size: 22px;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+            text-shadow: 0 0 10px rgba(125, 249, 255, 0.4);
+        }
+        .subtitle {
+            text-align: center;
+            font-size: 12px;
+            color: #a0a0a0;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        .file-display {
+            background-color: #0a0a0a;
+            border: 1px solid #2a3a4a;
+            border-radius: 6px;
+            padding: 12px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: bold;
+            color: #7df9ff;
+            margin-bottom: 20px;
+            letter-spacing: 0.5px;
+            word-break: break-all;
+            box-shadow: inset 0 0 8px rgba(125, 249, 255, 0.1);
+        }
+        .section {
+            border: 1px solid #1f2d3a;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 18px;
+            background-color: #0e0e0e;
+        }
+        .section-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+        }
+        .file-input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        input[type="file"] {
+            display: none;
+        }
+        .file-btn {
+            background-color: #ffffff;
+            color: #000000;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .file-name {
+            font-size: 11px;
+            color: #a0a0a0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            flex: 1;
+        }
+        .small-note {
+            font-size: 10px;
+            color: #555555;
+            margin-bottom: 10px;
+            font-style: italic;
+            word-break: break-all;
+        }
+        .label-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            font-weight: bold;
+            color: #7df9ff;
+            margin-bottom: 8px;
+        }
+        .badge {
+            background-color: #1f2d3a;
+            color: #7df9ff;
+            border-radius: 4px;
+            padding: 2px 8px;
+            font-size: 11px;
+            border: 1px solid #2a3a4a;
+        }
+        textarea {
+            width: 100%;
+            height: 120px;
+            background-color: #050505;
+            border: 1px solid #2a3a4a;
+            border-radius: 6px;
+            color: #e0e0e0;
+            font-size: 13px;
+            padding: 10px;
+            resize: vertical;
+            outline: none;
+            font-family: 'Courier New', Courier, monospace;
+            line-height: 1.4;
+            box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.8);
+        }
+        textarea:focus {
+            border-color: #7df9ff;
+            box-shadow: inset 0 0 8px rgba(125, 249, 255, 0.2);
+        }
+        .btn-row {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 12px;
+        }
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            cursor: pointer;
+            border: 1px solid #2a3a4a;
+            background-color: #0a0a0a;
+            color: #ffffff;
+            transition: all 0.15s ease;
+        }
+        .btn:active {
+            transform: scale(0.98);
+        }
+        .btn-primary {
+            background-color: #a0f0ff;
+            color: #000000;
+            border: none;
+            box-shadow: 0 0 15px rgba(160, 240, 255, 0.3);
+        }
+        .btn-primary:active {
+            background-color: #7df9ff;
+        }
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid #2a3a4a;
+            color: #e0e0e0;
+        }
+        .btn-outline:active {
+            background-color: #1a1a1a;
+        }
+        .log-box {
+            background-color: #050505;
+            border: 1px solid #2a3a4a;
+            border-radius: 8px;
+            padding: 12px;
+            min-height: 100px;
+            max-height: 180px;
+            overflow-y: auto;
+            font-size: 12px;
+            color: #00ff88;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-all;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.9);
+        }
+        .log-box .error {
+            color: #ff4444;
+        }
+        .log-box .info {
+            color: #7df9ff;
+        }
+        .log-box .warn {
+            color: #ffaa00;
+        }
+        .log-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2a3a4a;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>UMA BONE RENAMER</h1>
+        <div class="subtitle">Ghi tên bone gốc ở trên - tên thay thế ở dưới - bấm THAY</div>
+
+        <div class="file-display" id="fileDisplay">CHƯA CHỌN FILE</div>
+
+        <div class="section">
+            <div class="section-title">1. CHỌN FILE</div>
+            <div class="file-input-wrapper">
+                <button class="file-btn" onclick="document.getElementById('fileInput').click()">Chọn tệp</button>
+                <span class="file-name" id="fileName">chưa chọn tệp nào</span>
+                <input type="file" id="fileInput" accept="*/*">
+            </div>
+            <div class="small-note">Tên file phải đúng: assetindexer.U6Zffc4YIR3DslNj3cXvYGAqz58~3D</div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">2. NHẬP TÊN BONE</div>
+            
+            <div class="label-row">
+                <span>Tên bone GỐC (trên)</span>
+                <span class="badge" id="countOld">0</span>
+            </div>
+            <textarea id="oldBones" placeholder="bone_Head&#10;bone_Neck&#10;bone_Spine&#10;..."></textarea>
+
+            <div class="label-row" style="margin-top: 15px;">
+                <span>Tên bone THAY THẾ (dưới)</span>
+                <span class="badge" id="countNew">0</span>
+            </div>
+            <textarea id="newBones" placeholder="bone_Head_new&#10;bone_Neck_new&#10;bone_Spine_new&#10;..."></textarea>
+
+            <div class="btn-row">
+                <button class="btn btn-outline" id="btnFillSample">ĐIỀN 54 BONE MẪU</button>
+                <button class="btn btn-outline" id="btnClear">XÓA HẾT</button>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">3. THỰC HIỆN</div>
+            <button class="btn btn-primary" id="btnReplace">THAY</button>
+        </div>
+
+        <div class="section">
+            <div class="section-title">4. XUẤT FILE</div>
+            <div class="btn-row">
+                <button class="btn btn-primary" id="btnExportMod">LƯU FILE ĐÃ THAY</button>
+                <button class="btn btn-outline" id="btnExportOrig">LƯU FILE GỐC</button>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="log-title">LOG</div>
+            <div class="log-box" id="logBox">Sẵn sàng...
+Tool sẵn sàng. Chọn file asset để bắt đầu.</div>
+        </div>
+    </div>
+
+    <script>
+        let originalFileBuffer = null;
+        let originalFileName = "";
+        let modifiedFileBuffer = null;
+
+        const fileInput = document.getElementById('fileInput');
+        const fileNameSpan = document.getElementById('fileName');
+        const fileDisplay = document.getElementById('fileDisplay');
+        const oldBonesArea = document.getElementById('oldBones');
+        const newBonesArea = document.getElementById('newBones');
+        const countOld = document.getElementById('countOld');
+        const countNew = document.getElementById('countNew');
+        const logBox = document.getElementById('logBox');
+
+        function log(message, type = 'info') {
+            const time = new Date().toLocaleTimeString('vi-VN');
+            const prefix = `[${time}] `;
+            const span = document.createElement('div');
+            span.className = type;
+            span.textContent = prefix + message;
+            logBox.appendChild(span);
+            logBox.scrollTop = logBox.scrollHeight;
+            if (logBox.children.length > 200) {
+                logBox.removeChild(logBox.firstChild);
+            }
+        }
+
+        function updateCounts() {
+            const oldLines = oldBonesArea.value.split('\n').filter(l => l.trim() !== '');
+            const newLines = newBonesArea.value.split('\n').filter(l => l.trim() !== '');
+            countOld.textContent = oldLines.length;
+            countNew.textContent = newLines.length;
+        }
+
+        oldBonesArea.addEventListener('input', updateCounts);
+        newBonesArea.addEventListener('input', updateCounts);
+
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            originalFileName = file.name;
+            fileNameSpan.textContent = file.name;
+            fileDisplay.textContent = file.name;
+
+            log(`Đã chọn: ${file.name}`);
+            log(`Kích thước: ${file.size} bytes`);
+
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                originalFileBuffer = evt.target.result;
+                modifiedFileBuffer = null;
+                log(`Đã đọc dữ liệu file gốc thành công.`, 'info');
+            };
+            reader.onerror = function() {
+                log(`Lỗi đọc file!`, 'error');
+            };
+            reader.readAsArrayBuffer(file);
+        });
+
+        document.getElementById('btnFillSample').addEventListener('click', function() {
+            const sampleOld = [
+                "bone_Head", "bone_Neck", "bone_Spine", "bone_Spine1", "bone_Spine2", "bone_Hips",
+                "bone_LeftShoulder", "bone_LeftArm", "bone_LeftForeArm", "bone_LeftHand",
+                "bone_RightShoulder", "bone_RightArm", "bone_RightForeArm", "bone_RightHand",
+                "bone_LeftUpLeg", "bone_LeftLeg", "bone_LeftFoot", "bone_LeftToeBase",
+                "bone_RightUpLeg", "bone_RightLeg", "bone_RightFoot", "bone_RightToeBase",
+                "bone_LeftHandThumb1", "bone_LeftHandThumb2", "bone_LeftHandThumb3",
+                "bone_LeftHandIndex1", "bone_LeftHandIndex2", "bone_LeftHandIndex3",
+                "bone_LeftHandMiddle1", "bone_LeftHandMiddle2", "bone_LeftHandMiddle3",
+                "bone_LeftHandRing1", "bone_LeftHandRing2", "bone_LeftHandRing3",
+                "bone_LeftHandPinky1", "bone_LeftHandPinky2", "bone_LeftHandPinky3",
+                "bone_RightHandThumb1", "bone_RightHandThumb2", "bone_RightHandThumb3",
+                "bone_RightHandIndex1", "bone_RightHandIndex2", "bone_RightHandIndex3",
+                "bone_RightHandMiddle1", "bone_RightHandMiddle2", "bone_RightHandMiddle3",
+                "bone_RightHandRing1", "bone_RightHandRing2", "bone_RightHandRing3",
+                "bone_RightHandPinky1", "bone_RightHandPinky2", "bone_RightHandPinky3",
+                "bone_LeftEye", "bone_RightEye"
+            ];
+            const sampleNew = sampleOld.map(name => name + "_new");
+            oldBonesArea.value = sampleOld.join('\n');
+            newBonesArea.value = sampleNew.join('\n');
+            updateCounts();
+            log(`Đã điền ${sampleOld.length} bone mẫu.`, 'info');
+        });
+
+        document.getElementById('btnClear').addEventListener('click', function() {
+            oldBonesArea.value = '';
+            newBonesArea.value = '';
+            updateCounts();
+            log(`Đã xóa toàn bộ nội dung nhập liệu.`, 'warn');
+        });
+
+        function stringToBytes(str) {
+            return new TextEncoder().encode(str);
+        }
+
+        function replaceBytes(buffer, oldBytes, newBytes) {
+            const arr = new Uint8Array(buffer);
+            const result = [];
+            let i = 0;
+            let replacedCount = 0;
+
+            while (i < arr.length) {
+                let found = true;
+                for (let j = 0; j < oldBytes.length; j++) {
+                    if (i + j >= arr.length || arr[i + j] !== oldBytes[j]) {
+                        found = false;
+                        break;
+                    }
+                }
+                if (found) {
+                    for (let j = 0; j < newBytes.length; j++) {
+                        result.push(newBytes[j]);
+                    }
+                    i += oldBytes.length;
+                    replacedCount++;
+                } else {
+                    result.push(arr[i]);
+                    i++;
+                }
+            }
+            return {
+                data: new Uint8Array(result).buffer,
+                count: replacedCount
+            };
+        }
+
+        document.getElementById('btnReplace').addEventListener('click', function() {
+            if (!originalFileBuffer) {
+                log(`LỖI: Chưa chọn file asset!`, 'error');
+                return;
+            }
+            const oldLines = oldBonesArea.value.split('\n').map(l => l.trim()).filter(l => l !== '');
+            const newLines = newBonesArea.value.split('\n').map(l => l.trim()).filter(l => l !== '');
+
+            if (oldLines.length === 0 || newLines.length === 0) {
+                log(`LỖI: Chưa nhập tên bone gốc hoặc tên thay thế!`, 'error');
+                return;
+            }
+            if (oldLines.length !== newLines.length) {
+                log(`CẢNH BÁO: Số lượng bone gốc (${oldLines.length}) và thay thế (${newLines.length}) không khớp.`, 'warn');
+            }
+
+            const pairCount = Math.min(oldLines.length, newLines.length);
+            log(`Bắt đầu thay thế ${pairCount} cặp bone...`, 'info');
+
+            let currentBuffer = originalFileBuffer;
+            let totalReplaced = 0;
+
+            const pairs = [];
+            for (let k = 0; k < pairCount; k++) {
+                pairs.push({
+                    oldStr: oldLines[k],
+                    newStr: newLines[k],
+                    oldBytes: stringToBytes(oldLines[k]),
+                    newBytes: stringToBytes(newLines[k])
+                });
+            }
+            pairs.sort((a, b) => b.oldBytes.length - a.oldBytes.length);
+
+            for (const pair of pairs) {
+                const res = replaceBytes(currentBuffer, pair.oldBytes, pair.newBytes);
+                currentBuffer = res.data;
+                if (res.count > 0) {
+                    totalReplaced += res.count;
+                    log(`  + Đã thay "${pair.oldStr}" -> "${pair.newStr}" (${res.count} lần)`, 'info');
+                } else {
+                    log(`  - Không tìm thấy "${pair.oldStr}" trong file.`, 'warn');
+                }
+            }
+
+            if (totalReplaced > 0) {
+                modifiedFileBuffer = currentBuffer;
+                log(`HOÀN TẤT: Tổng cộng thay thế ${totalReplaced} vị trí.`, 'info');
+                log(`File đã sẵn sàng để lưu.`, 'info');
+            } else {
+                log(`THẤT BẠI: Không tìm thấy tên bone nào khớp trong file.`, 'error');
+            }
+        });
+
+        function downloadFile(buffer, filename) {
+            const blob = new Blob([buffer], { type: 'application/octet-stream' });
+            const url = URL.createObjectURL(blob);
+            
+            if (navigator.share && navigator.canShare) {
+                const file = new File([blob], filename, { type: 'application/octet-stream' });
+                if (navigator.canShare({ files: [file] })) {
+                    navigator.share({
+                        files: [file],
+                        title: 'Lưu file',
+                        text: 'File đã được xử lý'
+                    }).then(() => {
+                        log(`Đã chia sẻ file: ${filename}`, 'info');
+                    }).catch((err) => {
+                        log(`Chuyển sang tải xuống trực tiếp...`, 'warn');
+                        fallbackDownload(url, filename);
+                    });
+                    return;
+                }
+            }
+            fallbackDownload(url, filename);
+        }
+
+        function fallbackDownload(url, filename) {
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+            log(`Đã tải xuống file: ${filename}`, 'info');
+        }
+
+        document.getElementById('btnExportMod').addEventListener('click', function() {
+            if (!modifiedFileBuffer) {
+                log(`LỖI: Chưa thực hiện thay thế. Hãy bấm THAY trước.`, 'error');
+                return;
+            }
+            const outName = originalFileName.replace(/(\.[^.]+)$/, '_mod$1');
+            downloadFile(modifiedFileBuffer, outName);
+        });
+
+        document.getElementById('btnExportOrig').addEventListener('click', function() {
+            if (!originalFileBuffer) {
+                log(`LỖI: Chưa chọn file gốc.`, 'error');
+                return;
+            }
+            const outName = originalFileName.replace(/(\.[^.]+)$/, '_orig$1');
+            downloadFile(originalFileBuffer, outName);
+        });
+
+        updateCounts();
+    </script>
+</body>
+</html>
